@@ -4,7 +4,7 @@ A collection of [XState](https://xstate.js.org/docs/) machines for UI primitives
 
 _Based on [WAI-ARIA Authoring Practices 1.2](https://www.w3.org/TR/wai-aria-practices-1.2/)_
 
-**Machines:**:
+**Machines:**
 
 - [Tabs](#tabs)
 
@@ -12,14 +12,21 @@ _Based on [WAI-ARIA Authoring Practices 1.2](https://www.w3.org/TR/wai-aria-prac
 
 Source: [`machines/tabs.js`](machines/tabs.js)
 
-States (for each `<tab>` in the given tab list):
+### `createTabsMachine`
+
+**Options:**
+
+- `tabs`: list of tabs _(required)_
+- `activeTab`: initially active tab (if not given defaults to the first element in `tabs`)
+
+**States:** (for each `<tab>` in `tabs`)
 
 - `<tab>.focused`
 - `<tab>.blurred`
 
-Events:
+**Events:**
 
-- `<tab>` (for each `<tab>` in the given tab list)
+- `<tab>` (for each `<tab>` in `tabs`)
 - `CLICK`
 - `BLUR`
 - `'ArrowRight'`
