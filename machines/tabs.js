@@ -21,37 +21,75 @@ export default function createTabsMachine(tabs, activeTab) {
 
   const states = {};
   const events = {};
+  const context = {};
 
   for (let i = 0; i < tabs.length; i++) {
     const tab = tabs[i];
+    const isActive = tab === activeTab;
 
-    events[tab] = `${tab}.focused`;
+    context[tab] = {
+      focus: {
+        tabindex: isActive ? 0 : -1,
+      },
+      aria: {
+        controls: tab,
+        selected: isActive,
+        expanded: isActive,
+      },
+    };
+
+    events[tab] = `${tab}.active.focused`;
 
     states[tab] = {
       id: tab,
-      initial: 'blurred',
-      on: {
-        CLICK: '.focused',
-      },
+      initial: isActive ? 'active' : 'inactive',
+      entry: ['activate'],
       states: {
-        focused: {
-          on: {
-            ArrowRight: `#${getTabAfter(tab)}.focused`,
-            ArrowLeft: `#${getTabBefore(tab)}.focused`,
-            Home: `#${getFirstTab()}.focused`,
-            End: `#${getLastTab()}.focused`,
-            BLUR: 'blurred',
+        active: {
+          initial: 'blurred',
+          states: {
+            focused: {
+              on: {
+                ArrowRight: `#${getTabAfter(tab)}.active.focused`,
+                ArrowLeft: `#${getTabBefore(tab)}.active.focused`,
+                Home: `#${getFirstTab()}.active.focused`,
+                End: `#${getLastTab()}.active.focused`,
+                BLUR: 'blurred',
+              },
+            },
+            blurred: {
+              on: {
+                FOCUS: 'focused',
+              },
+            },
           },
         },
-        blurred: {},
+        inactive: {},
       },
     };
   }
 
-  return createMachine({
-    id: 'wai-aria-tabs',
-    initial: activeTab,
-    on: events,
-    states,
-  });
+  return createMachine(
+    {
+      id: 'wai-aria-tabs',
+      context,
+      initial: activeTab,
+      on: events,
+      states,
+    },
+    {
+      actions: {
+        activate: assign((context, event) => {
+          if (!tabs.includes(event.type)) return;
+          for (const tab in context) {
+            const isSelected = event.type === tab;
+            context[tab].focus.tabindex = isSelected ? 0 : -1;
+            context[tab].aria.selected = isSelected;
+            context[tab].aria.expanded = isSelected;
+          }
+          return context;
+        }),
+      },
+    }
+  );
 }

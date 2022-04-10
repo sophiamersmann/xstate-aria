@@ -21,18 +21,20 @@ Source: [`machines/tabs.js`](machines/tabs.js)
 
 **States:** (for each `<tab>` in `tabs`)
 
-- `<tab>.focused`
-- `<tab>.blurred`
+- `<tab>.active`
+- `<tab>.active.focused`
+- `<tab>.active.blurred`
+- `<tab>.inactive`
 
-**Events:**
+**Events:** (for each `<tab>` in `tabs`)
 
-- `<tab>` (for each `<tab>` in `tabs`)
-- `CLICK`
-- `BLUR`
-- `'ArrowRight'`
-- `'ArrowLeft'`
-- `'Home'`
-- `'End'`
+- `<tab>`: select tab
+- `FOCUS`: focus active tab
+- `BLUR`: blur active tab
+- `ArrowRight`: move to tab to the right
+- `ArrowLeft`: move to tab to the left
+- `Home`: move to first tab
+- `End`: move to last tab
 
 ### With Svelte
 
@@ -42,7 +44,7 @@ Source: [`machines/tabs.js`](machines/tabs.js)
   import { useMachine } from '@xstate/svelte';
 
   const tabs = ['tab1', 'tab2', 'tab3'];
-  const tabsMachine = createTabsMachine(tabs, 'tab2');
+  const tabsMachine = createTabsMachine(tabs, 'tab1');
   const { state, send } = useMachine(tabsMachine);
 
   function focus(node, active) {
@@ -62,16 +64,16 @@ Source: [`machines/tabs.js`](machines/tabs.js)
   }
 </script>
 
-<div role="tablist" aria-label="My tab list label">
+<div role="tablist" aria-label="My tabs">
   {#each tabs as tab}
-    {@const isActive = $state.matches(tab)}
+    {@const ctx = $state.context[tab]}
     <button
       type="button"
       role="tab"
-      tabindex={isActive ? 0 : -1}
-      aria-controls={tab}
-      aria-selected={isActive}
-      use:focus={$state.matches(`${tab}.focused`)}
+      tabindex={ctx.focus.tabindex}
+      aria-controls={ctx.aria.controls}
+      aria-selected={ctx.aria.selected}
+      use:focus={$state.matches(`${tab}.active.focused`)}
       on:focus={() => send(tab)}
       on:click={() => send(tab)}
       on:keydown={(e) => send(e.key)}
@@ -83,13 +85,13 @@ Source: [`machines/tabs.js`](machines/tabs.js)
 
 <div>
   {#each tabs as tab}
-    {@const isActive = $state.matches(tab)}
+    {@const ctx = $state.context[tab]}
     {#if $state.matches(tab)}
       <div
         id={tab}
         role="tabpanel"
-        tabindex={isActive ? 0 : -1}
-        aria-expanded={isActive}
+        tabindex={ctx.focus.tabindex}
+        aria-expanded={ctx.aria.expanded}
         on:blur={() => send('BLUR')}
       >
         Content for {tab}
