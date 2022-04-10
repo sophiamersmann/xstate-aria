@@ -3,10 +3,18 @@ import { createMachine } from 'xstate';
 /**
  * @param {string[]} tabs - list of tabs
  * @param {string} [activeTab] - initially active tab (defaults to the first tab in the given list)
+ * @param {'horizontal' | 'vertical'} [orientation] - horizontal or vertical orientation
  */
-export default function createTabsMachine(tabs, activeTab) {
+export default function createTabsMachine(
+  tabs,
+  activeTab,
+  orientation = 'horizontal'
+) {
   if (tabs.length === 0) return;
   if (!activeTab || !tabs.includes(activeTab)) activeTab = tabs[0];
+
+  const arrowAfter = orientation === 'horizontal' ? 'ArrowRight' : 'ArrowDown';
+  const arrowBefore = orientation === 'horizontal' ? 'ArrowLeft' : 'ArrowUp';
 
   const getTabBefore = (tab) => {
     const tabIndex = tabs.indexOf(tab);
@@ -50,8 +58,8 @@ export default function createTabsMachine(tabs, activeTab) {
           states: {
             focused: {
               on: {
-                ArrowRight: `#${getTabAfter(tab)}.active.focused`,
-                ArrowLeft: `#${getTabBefore(tab)}.active.focused`,
+                [arrowAfter]: `#${getTabAfter(tab)}.active.focused`,
+                [arrowBefore]: `#${getTabBefore(tab)}.active.focused`,
                 Home: `#${getFirstTab()}.active.focused`,
                 End: `#${getLastTab()}.active.focused`,
                 BLUR: 'blurred',

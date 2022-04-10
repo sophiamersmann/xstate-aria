@@ -18,6 +18,7 @@ Source: [`machines/tabs.js`](machines/tabs.js)
 
 - `tabs`: list of tabs _(required)_
 - `activeTab`: initially active tab (if not given defaults to the first element in `tabs`)
+- `orientation`: `vertical` or `horizontal` (defaults to `horizontal`)
 
 **States:** (for each `<tab>` in `tabs`)
 
@@ -31,8 +32,8 @@ Source: [`machines/tabs.js`](machines/tabs.js)
 - `<tab>`: select tab
 - `FOCUS`: focus active tab
 - `BLUR`: blur active tab
-- `ArrowRight`: move to tab to the right
-- `ArrowLeft`: move to tab to the left
+- `ArrowRight`/`ArrowDown`: move to next tab
+- `ArrowLeft`/`ArrowUp`: move to previous tab
 - `Home`: move to first tab
 - `End`: move to last tab
 
