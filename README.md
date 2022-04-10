@@ -18,7 +18,7 @@ Source: [`machines/tabs.js`](machines/tabs.js)
 
 - `tabs`: list of tabs _(required)_
 - `activeTab`: initially active tab (if not given defaults to the first element in `tabs`)
-- `orientation`: `vertical` or `horizontal` (defaults to `horizontal`)
+- `orientation`: `"vertical"` or `"horizontal"` (defaults to `"horizontal"`)
 
 **States:** (for each `<tab>` in `tabs`)
 
@@ -27,15 +27,15 @@ Source: [`machines/tabs.js`](machines/tabs.js)
 - `<tab>.active.blurred`
 - `<tab>.inactive`
 
-**Events:** (for each `<tab>` in `tabs`)
+**Events:**
 
-- `<tab>`: select tab
+- `<tab>`: select tab (for each `<tab>` in `tabs`)
 - `FOCUS`: focus active tab
 - `BLUR`: blur active tab
-- `ArrowRight`/`ArrowDown`: move to next tab
-- `ArrowLeft`/`ArrowUp`: move to previous tab
-- `Home`: move to first tab
-- `End`: move to last tab
+- `ArrowRight`/`ArrowDown`: move to the next tab
+- `ArrowLeft`/`ArrowUp`: move to the previous tab
+- `Home`: move to the first tab
+- `End`: move to the last tab
 
 ### With Svelte
 
